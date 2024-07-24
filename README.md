@@ -30,4 +30,10 @@ To Run Analysis:
 - Open MATLAB (2022b) and Set Path to include all folders in this repository
 - Move .czi files of interest into the working directory
 - Run first section: Select Folder For Processing
-- 
+  * Select directory containing the .czi files of interest
+- Run second section: Initialize Settings/Parameters
+  * Input the time interval (120 for experiments presented)
+  * Input the interval to be analysed (For faster processing of long movies, every 10 frames were analyzed. For particle tracking, in which every frame is analyzed, input 1)
+  * Input the number of channels (3 or 4)
+ 
+  * 
