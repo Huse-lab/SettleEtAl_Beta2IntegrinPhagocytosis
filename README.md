@@ -56,3 +56,26 @@ To Run Analysis:
     * Phagocytic Efficiency - Acidified Particles divided by Total Particles
   * Phagocytic index can also be calculated as Acidified Particles / Num Cells
   * Rows in each table represent time points analyzed, each column represents a sample analyzed. For single sample analyses, there will only be one column.
+ 
+ ##  Confocal Microscopy Phagocytic Cup Polarization Analysis Instructions
+ 
+ Main Script: PhagocyticCupQuantification_v4.m
+
+ Dependencies: Contained within Functions Folder
+
+ MATLAB Version: 2022b
+
+Raw Data Requirements: This analysis code is written to analyze 3D confocal microscopy data from a Stellaris 8 with Lightning deconvolution saved as individual .tif files. The v4 version included here uses both the Lightning devoncoluted and Raw data for analysis. The Lightning file (file ending in '_Lng.tif') is used for particle thesholding and segmenting to define the cup-cell interface, while intensity values are extracted from the Raw file (same label, without _Lng.tif). The Lightning and raw files must be in the same folder with the same name except for the Lng identifier. The code will check at the start and throw a warning for any missing Lng or raw files. 
+
+ To Run Analysis:
+ - Place all .tif files (both raw and Lng) into a directory of interest.
+ - Run the first section, select the directory of interest
+ - Run the second section, this will prompt you to identify which channel contains the particle
+ - Run the Main Loop. The runtime will depend on a number of factors. The rate-limiting step will be load each image into MATLAB, which is dependent on file size and whether it is being loaded locally or from a server. For the demo files included, it should take between 5-10 seconds per image to analyze.
+ - At the end of the loop, the code will generate a table with results for each analyzed sample. Each row corresponds to one sample:
+   * TotalStain and TotalStainRaw: mean fluoresence intensity of measured stain within the bounds of the whole cell, as identified by thresholding described in the methods. TotalStain extracts value directly from Lightning deconvoluted file and TotalStainRaw extracts directly from the Raw image file.
+   * ParticleStain and ParticleStainRaw: mean fluoresence intensity of the measured stain at the interface of particle and cell
+   * Ignore all other fields, as they are vestigial and not relevant for analysis here.
+If the image contains two color channels, it will assume that the stain of interest is contained in the channel not indicated to be the particle (specified in the second section)
+If the image contains more than two color channels, it will run the analysis for all additional stains labeled Stain1, Stain2, Stain3... 
+This table can be used to generate the ratios described in the paper. Accumulation Ratio is defined as ParticleStainRaw / TotalStainRaw. 
