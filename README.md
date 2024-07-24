@@ -4,9 +4,9 @@ Within this repository are packages for analyzing imaging data to reproduce anal
 
 ## Contents Overview
 
--Widefield Phagocytosis Analysis Code
--Widefield Phagocytosis Test Data
--Phagocytic Cup Polarization Analysis Code
--Phagocytic Cup Polarization Test Data
+- Widefield Phagocytosis Analysis Code
+- Widefield Phagocytosis Test Data
+- Phagocytic Cup Polarization Analysis Code
+- Phagocytic Cup Polarization Test Data
 
 ##  
