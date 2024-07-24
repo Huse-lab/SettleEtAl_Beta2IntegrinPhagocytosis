@@ -1,9 +1,10 @@
 # DAAMP_Phagocytosis
-Repository for code used to analyze data for Settle et al, 2024.
-Within this repository are packages for analyzing imaging data to reproduce analyses presented by Settle et al in the manuscript "Beta2 Integrins Impose a Mechanical Checkpoint On Phagocytosis" for publication in...
+Repository for code used to analyze data for Settle et al, 2024 (https://doi.org/10.1101/2024.02.20.580845).
+"Beta2 Integrins Impose a Mechanical Checkpoint On Phagocytosis" for publication in...
 
-Critical Note: This repository is strictly for the purpose of reproducing results from Settle et al 2024 (https://doi.org/10.1101/2024.02.20.580845). Some analysis parameters, such as thresholding defaults, channel identities, and meta-data parsing are specifically tailored to the experiments and analysis presented in the manuscript. For applied use to new datasets or experiments, adjustments will be required. Contact authors for assisstance if needed.  
+Critical Note: This repository is strictly for the purpose of reproducing results from Settle et al 2024. Some analysis parameters, such as thresholding defaults, channel identities, and meta-data parsing are specifically tailored to the experiments and analysis presented in the manuscript. For applied use to new datasets or experiments, adjustments will be required. Contact authors for assisstance if needed.  
 
+General System Requirements: All analyses were running with MATLAB 2022b using Mac OS Venture (13). Code has also been tested on MATLAB 2022b on Windows 11. See https://www.mathworks.com/support/requirements/previous-releases.html for system requirements for MATLAB and installation instructions. 
 
 ## Contents Overview
 
@@ -64,7 +65,7 @@ To Run Analysis:
  ##  Confocal Microscopy Phagocytic Cup Polarization Analysis Instructions
 For calculating Actin, Vinculin or CD18 accumulation ratios. This analysis is fully automated, besides data curation and running the code. 
 
-Related Figures: 3K, 4E, S5D, 6E, 7F, S9D
+Related Figures: 3K, 4E, S5D, 6E, 7F, S9D-E
  
  Main Script: PhagocyticCupQuantification_v4.m
 
@@ -91,14 +92,100 @@ This table can be used to generate the ratios described in the paper. Accumulati
 
 
 ## Phagocytic Cup Advancement GUI 
-For calculating actin coverage/phagocytic cup progress in Phagocytic stalling assays. NOTE: This script is a semi-automated MATLAB GUI. It uses automated segmentation to identify the particle in question and define its boundaries, but the cup position is determined by user inspection. The GUI allows for easier tracing of the cup position, and then calculates the actin coverage on the particle using the user-defined boundaries. 
+For calculating actin coverage/phagocytic cup progress in Phagocytic stalling assays with DAAM particles labeled with AF488. NOTE: This script is a semi-automated MATLAB GUI. It uses automated segmentation to identify the particle in question and define its boundaries, but the cup position is determined by user inspection. The GUI allows for easier tracing of the cup position, and then calculates the actin coverage on the particle using the user-defined boundaries. 
 
-Related Figures: 3H-I, 5G-H, 7C-D
+Related Figures: 3H-I, 5G-H, 7C-D. This was also used to calculate Fraction Engulfed to filter data to only analyze <60% complete cups for actin/CD18/vinculin accumulation analyses above. 
 
 Main Script: CupAdvancementInfrastructure.m
 
 Dependencies: This analysis uses the data-handling infrastructure from https://gitlab.com/dvorselen/DAAMparticle_Shape_Analysis
 
- MATLAB Version: 2022b
+MATLAB Version: 2022b
 
-Raw Data Requirements: This analysis code is written to analyze 3D confocal microscopy data from a Stellaris 8 with Lightning deconvolution saved as individual .tif files. 
+System Requirements: Enough RAM to hold all images analyzed in memory. Can be done in batches if necessary for computers with less RAM. For 16GB RAM, ~10 images per batch recommended.
+
+Raw Data Requirements: This analysis code is written to analyze 3D confocal microscopy data from a Stellaris 8 with Lightning deconvolution saved as individual .tif files. It has been tested on both Lightning and Raw images. Rresults in the manuscript used Lightning images. 
+
+To Run:
+- Open MATLAB 2022b, and set path to include DAAMparticle_Shape_Analysis package
+- Place all .tif files in directory of interest
+    -  NOTE: This analysis holds all images in memory, so should be analyzed in batches if not using a computer with especially high RAM. For a standard 16GB RAM laptop, ~10-20 images at a time works fine. 
+-  Run first section to load TIFs into memory
+  - If ReadBFImages throws an error, there may be a pathing issue. Clear the MATLAB path to default and re-add DAAMParticle_Shape_Analysis
+-  Run second section: Extract images and metadata
+  - User will be prompted with two or more images, click on the image with the particle to identify the particle channel
+  - Z-correction: Set to 1
+  - Zero-padded values: Click "No"
+- Run Main Loop. For each loaded image:
+  - User prompted with a sliceViewer stack of the particle channel. Click on the center of the particle to indicate the XZ plane to analyze. You do not have to adjust the Z-slice to find the center, and chosen center can be approximate.
+  - User presented with the maximum XZ-slice of the cell channel (actin). By clicking around the image, trace the outside of the phagocytic cup such that the cup is just enclosed in the resulting polygon. Double click to finish. If there is no visible cup, just trace a small rectangle below the lowest point of the cell. If there is a fully enclosed circle, trace the outside of that circle.
+  - Repeat until the end of the list of images
+- Run final section: Save output
+  - User Prompt for output file name
+  - Output: .mat structure "CupStats"
+    - Fraction_Engulfed is the calculated actin coverage presented in the paper e.g. Figure 3H
+    - partStats has volumetric information about the particle, this can be used for troubleshooting if results are unexpected.
+    - cup_edge is the user-defined polygon of the phagocytic cup positions.
+   
+
+## Phagocytic Cup Actin Clearance GUI 
+For analysis of actin/CD18 clearance at phagocytic cups on DAAM particles labeled with AF488. This script is a semi-automated MATLAB GUI that first uses the DAAMparticle_Shape-Analysis protocol to generate 3D reconstructions of the particles and identify stain signals on them. The protocol then presents line-traces of the stain signal on the phagocytic cup and the edges are defined by the user. These edges are used to define the central and outer regions of the phagocytic cup to calculate a clearance ratio, as defined in the methods.
+
+Related Figures: S4G (demonstration of the process), 3L, 4F, S5E, 6F, 9C. 
+
+Main Scripts: This section is split into multiple scripts to help with running multiple batches of images for large data sets: ActinStainOnParticle_Processing.m, ActinContent_Realign_andMakePlots.m, 
+
+System Requirements: Enough RAM to hold images in memory. Highly recommended to run in batches smaller than 10 images for 16GB RAM. 
+
+MATLAB Version: 2022b with Parallel Computing Toolbox
+
+Dependencies: This analysis uses particle analysis infrastructure from https://gitlab.com/dvorselen/DAAMparticle_Shape_Analysis
+
+Raw Data Requirements: This analysis code is written to analyze 3D confocal microscopy data from a Stellaris 8 with Lightning deconvolution saved as individual .tif files. It has been tested on both Lightning and Raw images. Rresults in the manuscript used Lightning images. 
+
+
+
+To Run Analysis:
+
+First Run ActinStainOnParticle_Processing.m:
+This section is an adaptation of the particle-triangulation processing steps presented in [Vorselen et al 2020](https://doi.org/10.1038/s41467-019-13804-z) and [de Jesus & Settle et al 2024. ](https://www.science.org/doi/10.1126/sciimmunol.adj2898)
+- Open MATLAB 2022b, and add DAAMparticle_Shape_Analysis package to path
+- Place all .tif files into directory of interest
+- Run First Section: Open UI to select files
+  - Select Files to analyze
+- Run Next Section: Extract the images and required metadata
+  - User will be prompted with two or more images, click on the image with the particle to identify the particle channel
+  - Z-correction: Set to 1
+  - Zero-padded values: Click "No"
+- Run Section: Threshold the images and identify particles (use all default options)
+  - This will take ~1 minute for 5-10 images
+- Run Section: Superlocalize particle edges and triangulate surface
+  - Use all default options when presented
+  - This may take a while depending on your system specifications. Expect ~5-10 minutes for standard system. 
+- Run Section: Triangulate surface and determine particle statistics
+- Run Section: Determine particle coverage by a secondary signal
+- Run Section: Convert secondary signal to mask and align cups
+  - This will sometimes warn you that signal-to-noise isn't good enough to properly mask. This is ok, as you will manually re-align the cups later.
+- Run Section: Optionally get cd18 stain -- if images contain CD18 stain
+- Run final section to remove large image data from MPRender structure and name/save output
+  - MPStats structure contains the rendered particle data that is used in the following steps for analysis. This structure can also be mined for additional DAAM particle-related analyses if desired: see https://github.com/Huse-lab/Synapse-Profiling for more information.
+ 
+Next, place MPRender structures into folder of interest and run ActinContent_Realign_andMakePlots.m
+NOTE: this step will filter out particles that are completely engulfed and overwrite the MPRender file. Be sure to put a duplicate in another folder if you want to maintain the original structure.
+- First Section: Load folder of MPRender files
+- Main Loop
+  - User will be prompted with a 3D-rendering of the particle with actin stain.
+  - Click and drag such that the base of the phagocytic cup is facing the user (estimate centroid of contact area), this will re-align the particle so that the base of the cup is centered for the next analysis.
+  - If particle is completely covered in Actin OR its too difficult to see any actin signal: click "Finished" this will remove the sample from the dataset.
+  - If actin-coverage only partially covers the particle, click "Partial"
+  - Repeat for each particle/image
+- This will generate some preliminary plots of actin profiles. This is just for manual inspection and quality control.
+
+Finally, run LineProfile_GUIOutput.m
+- Run first section to load MPRenders
+- Run Main Loop:
+  - User presented with a line profile of actin/Cd18 intensity along the axis, centered around the phagocytic cup base defined above. Click on the left and right edge of the contact area (the first and last peak of actin/cd18 signal). Click as closely to the edge as possible. The Y position of the click doesn't matter, only X position.
+  - Repeat for orthogonal line profile
+  - Repeat with two line profiles for all particles
+- Run final line to save table as a csv
+- Each file should have two clearance ratios based on orthogonal line profiles, take the average of these to calculate the clearance ratios presented in the manuscript. 
