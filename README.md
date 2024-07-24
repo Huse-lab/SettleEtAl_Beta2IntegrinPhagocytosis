@@ -99,6 +99,28 @@ Main Script: CupAdvancementInfrastructure.m
 
 Dependencies: This analysis uses the data-handling infrastructure from https://gitlab.com/dvorselen/DAAMparticle_Shape_Analysis
 
- MATLAB Version: 2022b
+MATLAB Version: 2022b
 
-Raw Data Requirements: This analysis code is written to analyze 3D confocal microscopy data from a Stellaris 8 with Lightning deconvolution saved as individual .tif files. 
+System Requirements: Enough RAM to hold all images analyzed in memory. Can be done in batches if necessary for computers with less RAM. For 16GB RAM, ~10 images per batch recommended.
+
+Raw Data Requirements: This analysis code is written to analyze 3D confocal microscopy data from a Stellaris 8 with Lightning deconvolution saved as individual .tif files. It has been tested on both Lightning 
+
+To Run:
+- Open MATLAB 2022b, and set path to include DAAMparticle_Shape_Analysis package
+- Place all .tif files in directory of interest
+    -  NOTE: This analysis holds all images in memory, so should be analyzed in batches if not using a computer with especially high RAM. For a standard 16GB RAM laptop, ~10-20 images at a time works fine. 
+-  Run first section to load TIFs into memory
+-  Run second section: Extract images and metadata
+  - User will be prompted with two or more images, click on the image with the particle to identify the particle channel
+  - Z-correction: Set to 1
+  - Zero-padded values: Click "No"
+- Run Main Loop. For each loaded image:
+  - User prompted with a sliceViewer stack of the particle channel. Click on the center of the particle to indicate the XZ plane to analyze. You do not have to adjust the Z-slice to find the center, and chosen center can be approximate.
+  - User presented with the maximum XZ-slice of the cell channel (actin). By clicking around the image, trace the outside of the phagocytic cup such that the cup is just enclosed in the resulting polygon. Double click to finish. If there is no visible cup, just trace a small rectangle below the lowest point of the cell. If there is a fully enclosed circle, trace the outside of that circle.
+  - Repeat until the end of the list of images
+- Run final section: Save output
+  - User Prompt for output file name
+  - Output: .mat structure "CupStats"
+    - Fraction_Engulfed is the calculated actin coverage presented in the paper e.g. Figure 3H
+    - partStats has volumetric information about the particle, this can be used for troubleshooting if results are unexpected.
+    - cup_edge is the user-defined polygon of the phagocytic cup positions.
