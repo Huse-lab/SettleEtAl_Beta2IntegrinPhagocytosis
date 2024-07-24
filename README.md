@@ -8,11 +8,15 @@ Critical Note: This repository is strictly for the purpose of reproducing result
 ## Contents Overview
 
 - Widefield Phagocytosis Analysis Code
-- Widefield Phagocytosis Test Data
 - Phagocytic Cup Polarization Analysis Code
-- Phagocytic Cup Polarization Test Data
+- Phagocytic Cup Advancement MATLAB GUI
+- Phagocytic Cup Clearance Analysis GUI 
 
 ##  Widefield Phagocytosis Analysis Instructions
+For calculating bulk phagocytic efficiency and phagocytic index, as well as tracking particle acidification rates. This analysis is fully-automated besides data curation and running the code. 
+
+Related Figures: 2B,2C,S2B-F,S4C, S6B-C
+
 Main Script: Phagocytosis_BatchProcess_v3.m
 
 Dependencies: Contained within Functions Folder
@@ -58,6 +62,9 @@ To Run Analysis:
   * Rows in each table represent time points analyzed, each column represents a sample analyzed. For single sample analyses, there will only be one column.
  
  ##  Confocal Microscopy Phagocytic Cup Polarization Analysis Instructions
+For calculating Actin, Vinculin or CD18 accumulation ratios. This analysis is fully automated, besides data curation and running the code. 
+
+Related Figures: 3K, 4E, S5D, 6E, 7F, S9D
  
  Main Script: PhagocyticCupQuantification_v4.m
 
@@ -67,7 +74,9 @@ To Run Analysis:
 
 Raw Data Requirements: This analysis code is written to analyze 3D confocal microscopy data from a Stellaris 8 with Lightning deconvolution saved as individual .tif files. The v4 version included here uses both the Lightning devoncoluted and Raw data for analysis. The Lightning file (file ending in '_Lng.tif') is used for particle thesholding and segmenting to define the cup-cell interface, while intensity values are extracted from the Raw file (same label, without _Lng.tif). The Lightning and raw files must be in the same folder with the same name except for the Lng identifier. The code will check at the start and throw a warning for any missing Lng or raw files. 
 
+
  To Run Analysis:
+ - Open MATLAB 2022b and set path to include all dependencies
  - Place all .tif files (both raw and Lng) into a directory of interest.
  - Run the first section, select the directory of interest
  - Run the second section, this will prompt you to identify which channel contains the particle
@@ -77,5 +86,19 @@ Raw Data Requirements: This analysis code is written to analyze 3D confocal micr
    * ParticleStain and ParticleStainRaw: mean fluoresence intensity of the measured stain at the interface of particle and cell
    * Ignore all other fields, as they are vestigial and not relevant for analysis here.
 If the image contains two color channels, it will assume that the stain of interest is contained in the channel not indicated to be the particle (specified in the second section)
-If the image contains more than two color channels, it will run the analysis for all additional stains labeled Stain1, Stain2, Stain3... 
-This table can be used to generate the ratios described in the paper. Accumulation Ratio is defined as ParticleStainRaw / TotalStainRaw. 
+If the image contains more than two color channels, it will run the analysis for all additional stains labeled Stain1, Stain2, Stain3... In this case, it will also calculate a correlation between Stain1 and Stain2 (see Figure S5D)
+This table can be used to generate the ratios described in the paper. Accumulation Ratio is defined as ParticleStainRaw / TotalStainRaw.
+
+
+## Phagocytic Cup Advancement GUI 
+For calculating actin coverage/phagocytic cup progress in Phagocytic stalling assays. NOTE: This script is a semi-automated MATLAB GUI. It uses automated segmentation to identify the particle in question and define its boundaries, but the cup position is determined by user inspection. The GUI allows for easier tracing of the cup position, and then calculates the actin coverage on the particle using the user-defined boundaries. 
+
+Related Figures: 3H-I, 5G-H, 7C-D
+
+Main Script: CupAdvancementInfrastructure.m
+
+Dependencies: This analysis uses the data-handling infrastructure from https://gitlab.com/dvorselen/DAAMparticle_Shape_Analysis
+
+ MATLAB Version: 2022b
+
+Raw Data Requirements: This analysis code is written to analyze 3D confocal microscopy data from a Stellaris 8 with Lightning deconvolution saved as individual .tif files. 
