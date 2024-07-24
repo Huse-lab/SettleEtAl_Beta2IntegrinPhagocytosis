@@ -188,4 +188,8 @@ Finally, run LineProfile_GUIOutput.m
   - Repeat for orthogonal line profile
   - Repeat with two line profiles for all particles
 - Run final line to save table as a csv
-- Each file should have two clearance ratios based on orthogonal line profiles, take the average of these to calculate the clearance ratios presented in the manuscript. 
+- Each file should have two clearance ratios based on orthogonal line profiles, take the average of these to calculate the clearance ratios presented in the manuscript.
+
+
+## Authors
+Alex Settle (settlea@mskcc.org), Morgan Huse (husem@mskcc.org)
