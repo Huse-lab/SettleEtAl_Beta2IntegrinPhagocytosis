@@ -26,7 +26,7 @@ for c = 0:num_channels-1        % loop through each channel
     structFields = ['Channel' num2str(c_display); 'Circles' num2str(c_display)];
     structLine.(structFields(1,:)) = cdata;
     if c_display == 2
-        radiusRange = [7,40];
+        radiusRange = [6,40];
 
         [labeledImage,centers,radii] = labelParticles(cdata,radiusRange);
 

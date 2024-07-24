@@ -25,7 +25,7 @@ for file = files'
     end
 end
 
-%%
+%% Main Loop
 SkipAll = false;
 ProcessAll = false;
 
@@ -75,6 +75,9 @@ for file_name = file_list
         'Channel2',[],'Circles2',{},'Channel3',[],...
         'xDim',[],'yDim',[],'LabeledImage',[],'Stats',table(), ...
         'TimeStamp',[],[]);
+    else
+        error('Error, only accepts 3 or 4 channels')
+    end
 
 
     
@@ -113,38 +116,11 @@ for file_name = file_list
 empty_indx = cellfun(@isempty,({frameStruct.xDim}));
 frameStruct = frameStruct(~empty_indx)
 
-frameStruct = rmfield(frameStruct, {'Channel1','Channel2','Channel3'});
+frameStruct = rmfield(frameStruct, {'Channel1','Channel2','Channel3','Channel0'});
 save(outmat,'frameStruct','-v7.3');
 clear('frameStruct','data');
 close(wait)
 end
-
-%% 
-files = dir(file_path);
-mat_list = {};
-for file = files'
-    if contains(file.name,'_frameStruct.mat')
-        mat_list = [mat_list file.name];
-    end
-end
-load(mat_list{1});
-ph_index_array = zeros(length([frameStruct(:).TimeStamp]),length(mat_list)+1);
-ph_index_array(:,1) = [frameStruct(:).TimeStamp]';
-
-ph_eff_array = zeros(length([frameStruct(:).TimeStamp]),length(mat_list)+1);
-ph_eff_array(:,1) = [frameStruct(:).TimeStamp]';
-
-for i = 2:length(mat_list)+1
-    disp(['Loading ' mat_list{i-1}])
-    load(mat_list{i-1});
-    ph_index_array(:,i) = [frameStruct(:).Phagocytic_Index]';
-    ph_eff_array(:,i) = [frameStruct(:).Num_Cells]';
-
-end
-
-tbl = array2table(ph_index_array,"VariableNames",[{'Time (s)'} mat_list]);
-%%
-writetable(tbl,'AHS4_102_PhagocyticIndex.csv')
 
 
 %% Create "Report" 
