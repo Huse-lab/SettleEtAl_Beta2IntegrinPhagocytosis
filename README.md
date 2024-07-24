@@ -14,7 +14,9 @@ Critical Note: This repository is strictly for the purpose of reproducing result
 
 ##  Widefield Phagocytosis Analysis Instructions
 Main Script: Phagocytosis_BatchProcess_v3.m
+
 Dependencies: Contained within Functions Folder
+
   - bfmatlab
   - createCirclesMask
   - labelParticles.m
